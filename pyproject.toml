@@ -17,6 +17,10 @@ dependencies = [
   "tqdm>=4.66,<5",
 ]
 
+[project.optional-dependencies]
+figures = ["matplotlib>=3.8,<4"]
+test = ["pytest>=8,<10"]
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 

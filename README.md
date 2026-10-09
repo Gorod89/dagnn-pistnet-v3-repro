@@ -6,7 +6,7 @@ This repository contains the original model implementation and the protocol/eval
 
 - `src/dagnn_pistnet` and `src/dagnn_pistnet_v3`: model, data adapters, training, metrics, and study logic.
 - `configs/v3`: selected frozen study and benchmark configurations, including the LargeST-CA 2019/15-minute protocol and source commit lock.
-- `scripts/v3/competitors`: selected canonical-data, model-runner, evaluation, and paired-analysis scripts.
+- `scripts/v3/competitors`: selected canonical-data, model-runner, evaluation, paired-analysis, and figure-generation scripts. Figure generation requires the separately generated analysis artifacts and does not ship article artwork.
 
 The competitor scripts require separately obtained upstream checkouts at the commits recorded in `configs/v3/competitor_sources.lock.json`. Their source code is **not** vendored here. Each dataset must be obtained from its respective provider and used under its own terms. Configuration paths are examples relative to a local workspace; no data or output files are included.
 

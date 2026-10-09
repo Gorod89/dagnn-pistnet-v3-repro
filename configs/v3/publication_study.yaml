@@ -1,0 +1,54 @@
+study_name: dagnn_pistnet_v3_ablation
+datasets:
+  metr_la: configs/v3/metr_la.yaml
+  pems_bay: configs/v3/pems_bay.yaml
+  pems07: configs/v3/pems07.yaml
+  pems08: configs/v3/pems08.yaml
+  large_st_ca: configs/v3/large_st_ca.yaml
+baseline: full
+seeds: [13, 42, 97]
+output_root: artifacts/v3/studies
+bootstrap_samples: 2000
+confidence_level: 0.95
+fail_fast: true
+require_clean_worktree: true
+validation_selection_path: artifacts/v3/tuning/v3_validation_grid/best_validation_configs.json
+ablations:
+  full:
+    training:
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt
+  no_delta:
+    model:
+      use_delta_decoder: false
+    training:
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt
+  no_hierarchy:
+    model:
+      use_hierarchy: false
+    training:
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt
+  no_operator_splitting:
+    model:
+      use_operator_splitting: false
+    training:
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt
+  no_probabilistic_head:
+    model:
+      use_probabilistic_head: false
+    training:
+      nll_weight: 0.0
+      mae_weight: 1.0
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt
+  no_rollout_curriculum:
+    training:
+      curriculum_start_steps: 12
+      semigroup_weight: 0.0
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt
+  no_cross_dataset_pretraining:
+    training:
+      pretrained_encoder_path: null
+  no_decomposition:
+    model:
+      use_trend_seasonal_residual: false
+    training:
+      pretrained_encoder_path: artifacts/v3/pretraining_all_no_decomposition/pretrained_encoder.pt

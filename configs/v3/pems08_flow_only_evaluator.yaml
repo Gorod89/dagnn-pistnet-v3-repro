@@ -1,0 +1,18 @@
+# Flow-only view for published SpecSTG comparison. The timeline split, sensor
+# order, masks, and evaluator are the same as configs/v3/pems08.yaml.
+data:
+  dataset: PEMS08
+  data_path: artifacts/v3/protocols/pems08.flow_only.npz
+  adjacency_path: null
+  feature_names: [flow]
+  units: [vehicles_per_5_minutes]
+  history_steps: 12
+  forecast_steps: 12
+  train_ratio: 0.7
+  val_ratio: 0.1
+  split_policy: nonoverlapping_timeline
+  graph_top_k: 10
+  graph_directed: false
+  sampling_seconds: 300
+  use_calendar_features: false
+  primary_feature_index: 0

@@ -1,0 +1,56 @@
+data:
+  dataset: PEMS-BAY
+  data_path: data/pems-bay.h5
+  adjacency_path: null
+  feature_names: [speed]
+  units: [mph]
+  history_steps: 12
+  forecast_steps: 12
+  train_ratio: 0.7
+  val_ratio: 0.1
+  graph_top_k: 10
+  graph_directed: false
+  sampling_seconds: 300
+  use_calendar_features: true
+  primary_feature_index: 0
+
+model:
+  hidden_dim: 64
+  temporal_layers: 2
+  dropout: 0.1
+  num_regimes: 3
+  hierarchy_ratio: 0.08
+  max_clusters: 64
+  min_clusters: 4
+  operator_substeps: 1
+  use_delta_decoder: true
+  use_hierarchy: true
+  use_operator_splitting: true
+  use_probabilistic_head: true
+  use_event_jump: true
+  use_hard_conservation: false
+  use_trend_seasonal_residual: true
+
+physics:
+  nonnegative_weight: 0.001
+
+training:
+  epochs: 30
+  batch_size: 16
+  learning_rate: 0.0003
+  patience: 8
+  seed: 42
+  device: auto
+  amp: true
+  curriculum_start_steps: 1
+  curriculum_full_fraction: 0.5
+  nll_weight: 1.0
+  mae_weight: 0.2
+  semigroup_weight: 0.05
+  masked_pretrain_weight: 0.05
+  output_dir: artifacts/v3/pems_bay
+  deterministic_algorithms: true
+
+study:
+  seeds: [13, 42, 97]
+  bootstrap_samples: 2000

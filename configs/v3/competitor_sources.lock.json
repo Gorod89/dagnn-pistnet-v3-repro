@@ -1,0 +1,69 @@
+{
+  "schema": "dagnn-pistnet-competitor-sources-v1",
+  "generated_on": "2026-09-04",
+  "repositories": [
+    {
+      "name": "STAEformer",
+      "repository": "https://github.com/XDZhelheim/STAEformer.git",
+      "branch_observed": "main",
+      "commit": "fc49d39b2f1a8e3cf37b6289d7240680e1690f3f",
+      "local_path": "external/competitors/STAEformer",
+      "entrypoint": "model/train.py",
+      "runner": "scripts/v3/competitors/run_staeformer.py",
+      "environment": "configs/v3/competitor_envs/staeformer.requirements.lock.txt",
+      "environment_status": "specified_not_installed",
+      "license": "NO-LICENSE-FILE",
+      "redistribution_allowed": false,
+      "evidence_sha256": "ed759bf5e442684d125dfbfe5b9c78729baa7c3724a8fc48f4cd9086182baec0"
+    },
+    {
+      "name": "PDFormer",
+      "repository": "https://github.com/BUAABIGSCity/PDFormer.git",
+      "branch_observed": "master",
+      "commit": "f8c8f6ad007a04fad3baee958b89504711852ce9",
+      "local_path": "external/competitors/PDFormer",
+      "entrypoint": "run_model.py",
+      "runner": "scripts/v3/competitors/run_pdformer.py",
+      "environment": "external/competitors/PDFormer/requirements.txt",
+      "environment_status": "upstream_exact_not_installed",
+      "python": "3.9.7",
+      "pytorch": "1.10.1",
+      "requirements_sha256": "a7814f34fd27053c496b9d33f39288bb85202f70d37bf11ce6fbfda6321a4a34",
+      "license": "MIT",
+      "license_sha256": "6d441d60f9c4b028be5d2d8bed08643b013ed719300ef0e4aa5a32dcd69e0f55"
+    },
+    {
+      "name": "STID-BasicTS",
+      "repository": "https://github.com/GestaltCogTeam/BasicTS.git",
+      "branch_observed": "master",
+      "commit": "c2bb6e31e591167e84459775a21a62e70a5893ce",
+      "local_path": "external/competitors/BasicTS",
+      "entrypoint": "src/basicts/launcher.py",
+      "runner": "scripts/v3/competitors/run_stid.py",
+      "environment": "configs/v3/competitor_envs/basicts-stid.requirements.lock.txt",
+      "environment_status": "specified_not_installed",
+      "upstream_requirements_sha256": "252fbf50201d622dd667db0b30c44f507ca7e78f6820cbc9eeb97acba17f9c0c",
+      "pyproject_sha256": "6fee2004af7eeb0915c42bc2d660a30ac21c898defca5b45a03c4c4c192b2b68",
+      "license": "Apache-2.0",
+      "license_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
+    },
+    {
+      "name": "FaST",
+      "repository": "https://github.com/yijizhao/FaST.git",
+      "branch_observed": "main",
+      "commit": "c94a6273df801a0092f92d97a0c06a110d6bd90c",
+      "local_path": "external/competitors/FaST",
+      "entrypoint": "main-master/experiments/train_seed.py",
+      "runner": "scripts/v3/competitors/run_fast.py",
+      "environment": "external/competitors/FaST/requirements.txt",
+      "environment_status": "upstream_exact_linux_not_installed",
+      "python": "3.11.8",
+      "pytorch": "2.2.1",
+      "platform": "Ubuntu 20.04 / CUDA 12.1",
+      "requirements_sha256": "a9178d7161795f2d08f01128f6087230cbc725f5aef561634cf94c89cdf5a9dd",
+      "license": "NO-LICENSE-FILE",
+      "redistribution_allowed": false,
+      "evidence_sha256": "ebab30a36dabcf867be453fceebf1a417548e7ec49192e9742fb6547d1876f23"
+    }
+  ]
+}

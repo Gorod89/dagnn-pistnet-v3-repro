@@ -1,0 +1,22 @@
+schema: dagnn-pistnet-v3-missing-sensor-robustness-v1
+status: frozen_before_evaluation
+dataset: PEMS08
+study_source_commit: f8865ab01454dc40e552d6aa79141043c07302fd
+source_checkout: .tools/study-f8865ab0/src
+checkpoints_root: artifacts/v3/studies/dagnn_pistnet_v3_ablation/pems08
+variants: [full, no_hierarchy]
+seeds: [13, 42, 97]
+mask_rates: [0.0, 0.1, 0.3]
+mask_seed: 20261007
+mask_unit: sensor
+mask_scope: all_12_history_steps_and_all_3_features
+mask_sampling: deterministic_per_test_window_without_replacement_shared_across_variants_and_training_seeds
+imputation: zero_in_training_normalized_space_equivalent_to_training_feature_mean
+forecast_target: original_unmodified_flow
+primary_horizon_step: 12
+primary_metric: masked_sensor_flow_MAE_at_60_minutes
+secondary_metrics: [all_sensor_flow_MAE_at_60_minutes, unmasked_sensor_flow_MAE_at_60_minutes]
+target_validity: finite_nonzero_flow_targets_only
+primary_contrast: difference_in_masked_sensor_MAE_degradation_full_minus_no_hierarchy
+analysis: seed_stratified_12_window_circular_block_bootstrap_with_Holm_across_two_nonzero_mask_rates
+interpretation: inference_only_sensor_outage_stress_test_not_retraining_or_physical_validation

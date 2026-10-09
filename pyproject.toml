@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dagnn-pistnet-v3-repro"
+version = "0.1.0"
+description = "Traffic-sensor forecasting reproducibility code"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "numpy>=1.26,<3",
+  "pandas>=2.1,<4",
+  "h5py>=3.10,<4",
+  "PyYAML>=6.0,<7",
+  "torch>=2.4,<3",
+  "tqdm>=4.66,<5",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

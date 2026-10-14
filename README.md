@@ -21,4 +21,6 @@ The 5-minute component study and the LargeST-CA 2019/15-minute comparison are se
 
 The code is released from a reviewed snapshot of the project workspace. The original study source commit was `f8865ab01454dc40e552d6aa79141043c07302fd`; the later benchmark and analysis utilities came from the main development line. Per-run checkpoints, predictions, and large derived arrays are not included in this small code repository. Any result reproduction must record newly generated artifact hashes, source commits, environment versions, seeds, and evaluator configuration.
 
-No reuse license is granted by the presence of this repository until the authors approve and add one; contact the authors for licensing. Third-party datasets and implementations remain subject to their own terms. A code archive identifier has not yet been assigned.
+## License
+
+The original code and documentation in this repository are licensed under the [MIT License](LICENSE). Preserve the copyright and permission notice when reusing substantial portions. This license does not cover third-party datasets, upstream competitor implementations fetched separately, pretrained weights, or materials absent from this repository (including the manuscript and journal template); those remain subject to their respective owners' terms. A code archive identifier has not yet been assigned.

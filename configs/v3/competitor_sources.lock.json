@@ -1,6 +1,6 @@
 {
   "schema": "dagnn-pistnet-competitor-sources-v1",
-  "generated_on": "2026-09-04",
+  "generated_on": "2026-10-14",
   "repositories": [
     {
       "name": "STAEformer",
@@ -64,6 +64,26 @@
       "license": "NO-LICENSE-FILE",
       "redistribution_allowed": false,
       "evidence_sha256": "ebab30a36dabcf867be453fceebf1a417548e7ec49192e9742fb6547d1876f23"
+    },
+    {
+      "name": "STID-upstream-anchor",
+      "repository": "https://github.com/GestaltCogTeam/STID.git",
+      "commit": "e8b313bc591bdd0101a1619962c9b503e75127c0",
+      "local_path": "external/competitors/STID",
+      "entrypoint": "stid/arch/stid_arch.py",
+      "runner": "scripts/v3/competitors/run_stid_upstream_anchor.py",
+      "license": "Apache-2.0",
+      "license_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6"
+    },
+    {
+      "name": "SpecSTG",
+      "repository": "https://github.com/lequanlin/SpecSTG.git",
+      "commit": "c434bcd27507851ad9f40aa92e7147d3e91e5b20",
+      "local_path": "external/competitors/SpecSTG",
+      "entrypoint": "algorithm/SpecSTG_network.py",
+      "runner": "scripts/v3/competitors/train_specstg_pems08.py",
+      "license": "MIT",
+      "license_sha256": "6cad8d56f829a280f524e83826bb6ed14cb3589970827123900f78ee8c68fb85"
     }
   ]
 }

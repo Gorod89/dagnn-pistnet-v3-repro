@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 import torch
 
 from dagnn_pistnet_v3.config import V3ModelConfig, V3PhysicsConfig
@@ -82,3 +83,48 @@ def test_disabled_probabilistic_head_has_one_fixed_scale_mode() -> None:
     )
     assert result.means.shape[-2] == 1
     assert torch.allclose(result.scales, torch.full_like(result.scales, 0.05))
+
+
+def test_operator_order_is_capacity_matched_and_changes_only_composition() -> None:
+    edge_index, edge_weight = _graph()
+    default = DAGNNPISTNetV3(
+        1, 1, 5, 2, 0, 0,
+        V3ModelConfig(hidden_dim=8, temporal_layers=1, dropout=0.0),
+    )
+    reverse = DAGNNPISTNetV3(
+        1, 1, 5, 2, 0, 0,
+        V3ModelConfig(
+            hidden_dim=8,
+            temporal_layers=1,
+            dropout=0.0,
+            operator_order=("source_sink", "diffusion", "transport"),
+        ),
+    )
+    reverse.load_state_dict(default.state_dict())
+    default.eval()
+    reverse.eval()
+    assert sum(p.numel() for p in default.parameters()) == sum(
+        p.numel() for p in reverse.parameters()
+    )
+    state = torch.randn(2, 5, 8)
+    expected = default.source_sink(
+        default.diffusion(
+            default.transport(state, edge_index, edge_weight, None),
+            edge_index,
+            edge_weight,
+        ),
+        None,
+    )
+    actual_default = default._operator_step(
+        state, edge_index, edge_weight, None, None, None
+    )
+    actual_reverse = reverse._operator_step(
+        state, edge_index, edge_weight, None, None, None
+    )
+    assert torch.allclose(actual_default, expected)
+    assert not torch.allclose(actual_default, actual_reverse)
+
+
+def test_operator_order_rejects_missing_or_repeated_modules() -> None:
+    with pytest.raises(ValueError, match="operator_order"):
+        V3ModelConfig(operator_order=("transport", "diffusion", "diffusion"))

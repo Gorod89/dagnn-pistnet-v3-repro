@@ -152,9 +152,13 @@ class DAGNNPISTNetV3(nn.Module):
     ) -> torch.Tensor:
         if self.config.use_operator_splitting:
             for _ in range(self.config.operator_substeps):
-                state = self.transport(state, edge_index, edge_weight, edge_attr)
-                state = self.diffusion(state, edge_index, edge_weight)
-                state = self.source_sink(state, context)
+                for operator in self.config.operator_order:
+                    if operator == "transport":
+                        state = self.transport(state, edge_index, edge_weight, edge_attr)
+                    elif operator == "diffusion":
+                        state = self.diffusion(state, edge_index, edge_weight)
+                    else:
+                        state = self.source_sink(state, context)
         if self.config.use_event_jump:
             state = self.event_jump(state, events)
         return state

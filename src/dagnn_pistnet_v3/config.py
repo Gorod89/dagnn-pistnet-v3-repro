@@ -68,6 +68,7 @@ class V3ModelConfig:
     max_clusters: int = 256
     min_clusters: int = 2
     operator_substeps: int = 1
+    operator_order: tuple[str, str, str] = ("transport", "diffusion", "source_sink")
     edge_attr_dim: int = 0
     min_scale: float = 0.01
     max_scale: float = 3.0
@@ -89,6 +90,10 @@ class V3ModelConfig:
             raise ValueError("hierarchy_ratio must be in (0, 1]")
         if self.operator_substeps < 1:
             raise ValueError("operator_substeps must be positive")
+        order = tuple(self.operator_order)
+        if len(order) != 3 or set(order) != {"transport", "diffusion", "source_sink"}:
+            raise ValueError("operator_order must permute transport, diffusion, source_sink")
+        object.__setattr__(self, "operator_order", order)
         if not 0 < self.min_scale <= self.max_scale:
             raise ValueError("invalid probabilistic scale bounds")
         if self.moving_average_window < 1 or self.moving_average_window % 2 == 0:

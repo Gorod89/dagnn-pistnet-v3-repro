@@ -1,0 +1,19 @@
+study_name: operator_order_capacity_matched
+datasets:
+  metr_la: configs/v3/metr_la.yaml
+  pems_bay: configs/v3/pems_bay.yaml
+  pems08: configs/v3/pems08.yaml
+baseline: reverse_order
+seeds: [13, 42, 97]
+output_root: artifacts/v3/studies
+bootstrap_samples: 2000
+confidence_level: 0.95
+fail_fast: true
+require_clean_worktree: true
+validation_selection_path: artifacts/v3/tuning/v3_validation_grid/best_validation_configs.json
+ablations:
+  reverse_order:
+    model:
+      operator_order: [source_sink, diffusion, transport]
+    training:
+      pretrained_encoder_path: artifacts/v3/pretraining_all/pretrained_encoder.pt

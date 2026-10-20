@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite this release."
+type: software
+title: "DAGNN-PISTNet-v3 reproducibility code"
+version: 0.1.0
+license: MIT
+abstract: "Original model, protocol, evaluation, and figure-generation code for a traffic-sensor forecasting study. This archive excludes the manuscript, journal template, third-party datasets and code, model weights, and predictions."
+authors:
+  - given-names: Mikhail
+    family-names: Gorodnichev
+    orcid: "https://orcid.org/0000-0003-1739-9831"
+  - given-names: Grach
+    family-names: Mkrtchian
+    orcid: "https://orcid.org/0000-0002-5802-5513"
+repository-code: "https://github.com/Gorod89/dagnn-pistnet-v3-repro"
+keywords:
+  - traffic forecasting
+  - probabilistic forecasting
+  - reproducibility

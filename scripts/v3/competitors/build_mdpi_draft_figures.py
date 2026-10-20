@@ -20,7 +20,7 @@ ANALYSIS = ROOT / "artifacts/v3/competitor_analysis/large_st_ca_2019_15min_offic
 READINESS = ROOT / "artifacts/v3/publication_readiness"
 STUDY = ROOT / "artifacts/v3/studies/dagnn_pistnet_v3_ablation"
 FIGURES = ROOT / "docs/manuscript_mdpi/figures"
-COLORS = {"ours": "#24627A", "fast": "#C24C32", "stid": "#7E8B3A"}
+COLORS = {"ours": "#24627A", "fast": "#C24C32", "stid": "#7E8B3A", "stid_old": "#888888"}
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -36,35 +36,37 @@ def save(fig: plt.Figure, name: str) -> None:
 
 
 def architecture() -> None:
-    fig, ax = plt.subplots(figsize=(13.2, 5.8))
+    fig, ax = plt.subplots(figsize=(13.2, 3.4))
     ax.set_xlim(0, 13.2)
-    ax.set_ylim(0, 5.8)
+    ax.set_ylim(0, 3.4)
     ax.axis("off")
 
     def box(x: float, y: float, w: float, title: str, subtitle: str, color: str) -> None:
-        ax.add_patch(FancyBboxPatch((x, y), w, 0.9, boxstyle="round,pad=0.1,rounding_size=0.13", linewidth=1.2, edgecolor=color, facecolor="white"))
-        ax.text(x + w / 2, y + 0.57, title, ha="center", va="center", fontsize=10, weight="bold", color=color)
-        ax.text(x + w / 2, y + 0.27, subtitle, ha="center", va="center", fontsize=8.3, color="#333333")
+        ax.add_patch(FancyBboxPatch((x, y), w, 0.9, boxstyle="round,pad=0.06,rounding_size=0.10", linewidth=1.2, edgecolor=color, facecolor="white"))
+        ax.text(x + w / 2, y + 0.57, title, ha="center", va="center", fontsize=9.0, weight="bold", color=color)
+        ax.text(x + w / 2, y + 0.27, subtitle, ha="center", va="center", fontsize=7.3, color="#333333")
 
     def arrow(x1: float, y1: float, x2: float, y2: float, color: str = "#57636B") -> None:
         ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle="-|>", mutation_scale=12, linewidth=1.3, color=color))
 
-    box(0.2, 3.5, 2.0, "History + calendar", "12 observed steps", COLORS["ours"])
-    box(2.7, 3.5, 2.1, "Encoder", "trend / residual", COLORS["ours"])
-    box(5.3, 3.5, 2.1, "Fine graph", "directed messages", COLORS["ours"])
-    box(7.9, 3.5, 2.1, "Coarse graph", "corridor pooling", COLORS["ours"])
-    box(10.5, 3.5, 2.3, "Rollout decoder", "increment + regimes", COLORS["ours"])
-    for x1, x2 in ((2.2, 2.7), (4.8, 5.3), (7.4, 7.9), (10.0, 10.5)):
-        arrow(x1, 3.95, x2, 3.95)
-    box(2.0, 1.45, 2.2, "Transport", "edge conditioned", COLORS["fast"])
-    box(5.25, 1.45, 2.2, "Diffusion", "bounded graph term", COLORS["fast"])
-    box(8.5, 1.45, 2.2, "Source / sink", "local forcing", COLORS["fast"])
-    arrow(4.2, 1.9, 5.25, 1.9, COLORS["fast"])
-    arrow(7.45, 1.9, 8.5, 1.9, COLORS["fast"])
-    arrow(6.2, 3.5, 3.1, 2.45, COLORS["fast"])
-    arrow(10.7, 1.9, 11.65, 3.5, COLORS["fast"])
-    ax.text(6.4, 0.65, "Sequential operator block; probabilistic output yields mixture trajectories and predictive intervals", ha="center", fontsize=10)
-    ax.text(6.4, 5.12, "Event jump and hard conservation are inactive in the evaluated flow-only configuration", ha="center", fontsize=9.4, color="#666666")
+    stages = [
+        ("History", "12 steps", COLORS["ours"]),
+        ("Encoder", "trend / residual", COLORS["ours"]),
+        ("Fine graph", "directed messages", COLORS["ours"]),
+        ("Coarse graph", "topology pooling", COLORS["ours"]),
+        ("Transport", "edge conditioned", COLORS["fast"]),
+        ("Diffusion", "bounded graph", COLORS["fast"]),
+        ("Source / sink", "local forcing", COLORS["fast"]),
+        ("Increment", "mixture modes", COLORS["ours"]),
+    ]
+    width, gap, left = 1.47, 0.18, 0.08
+    for index, (title, subtitle, color) in enumerate(stages):
+        x = left + index * (width + gap)
+        box(x, 1.35, width, title, subtitle, color)
+        if index:
+            arrow(x - gap + 0.02, 1.80, x - 0.02, 1.80)
+    ax.text(6.6, 0.57, "The learned operator block and increment update repeat at each autonomous forecast step", ha="center", fontsize=9.5)
+    ax.text(6.6, 2.78, "Event jump and hard conservation are inactive in the evaluated flow-only configuration", ha="center", fontsize=9.2, color="#666666")
     save(fig, "figure1_architecture")
 
 
@@ -92,17 +94,21 @@ def ablations() -> None:
 
 def official_accuracy() -> None:
     data = rows(ANALYSIS / "metrics_summary.csv")
+    anchor = json.loads((ANALYSIS / "stid_upstream_anchor/analysis.json").read_text(encoding="utf-8"))
     horizons = [15, 45, 90, 180]
     fig, ax = plt.subplots(figsize=(8.6, 5.5))
-    for name, key in (("DAGNN-PISTNet-v3", "ours"), ("FaST", "fast"), ("STID", "stid")):
+    for name, key, label in (("DAGNN-PISTNet-v3", "ours", "DAGNN-PISTNet-v3"), ("FaST", "fast", "FaST (12-step adapted)"), ("STID", "stid_old", "STID (prior BasicTS local)")):
         subset = {int(r["horizon"].replace("min", "")): r for r in data if r["model"] == name}
         means = [float(subset[h]["mae_mean"]) for h in horizons]
         sd = [float(subset[h]["mae_std"]) for h in horizons]
-        ax.errorbar(horizons, means, yerr=sd, marker="o", linewidth=2, capsize=3, color=COLORS[key], label=name)
+        ax.errorbar(horizons, means, yerr=sd, marker="o", linewidth=1.7, capsize=3, color=COLORS[key], label=label)
+    means = [anchor["horizons"][f"{h}min"]["metrics"]["mae"]["mean"] for h in horizons]
+    sd = [anchor["horizons"][f"{h}min"]["metrics"]["mae"]["sample_sd"] for h in horizons]
+    ax.errorbar(horizons, means, yerr=sd, marker="s", linewidth=2.3, capsize=3, color=COLORS["stid"], label="STID (upstream-adapted anchor)")
     ax.set_xticks(horizons)
     ax.set_xlabel("Forecast horizon (minutes)")
     ax.set_ylabel("MAE (original flow units; lower is better)")
-    ax.set_title("Official LargeST-CA 2019 / 15-minute protocol")
+    ax.set_title("Local runs on LargeST-CA 2019 / 15-minute targets")
     ax.grid(alpha=0.22)
     ax.legend(frameon=False)
     save(fig, "figure3_official_mae")
@@ -110,17 +116,22 @@ def official_accuracy() -> None:
 
 def paired_differences() -> None:
     horizons = {"h1": 15, "h3": 45, "h6": 90, "h12": 180}
-    fig, axes = plt.subplots(1, 2, figsize=(11.8, 4.5), sharey=True)
-    for ax, reference, key in ((axes[0], "FaST", "fast"), (axes[1], "STID", "stid")):
-        file = ANALYSIS / f"paired_vs_{reference.lower()}_block_holm.csv"
-        record = {horizons[r["horizon"]]: r for r in rows(file)}
+    anchor = json.loads((ANALYSIS / "stid_upstream_anchor/analysis.json").read_text(encoding="utf-8"))
+    fig, axes = plt.subplots(1, 3, figsize=(16.5, 4.5), sharey=True)
+    panels = (
+        (axes[0], "FaST (12-step adapted)", "fast", rows(ANALYSIS / "paired_vs_fast_block_holm.csv")),
+        (axes[1], "STID (upstream-adapted)", "stid", anchor["paired_ours_minus_anchor"]),
+        (axes[2], "STID (prior BasicTS local)", "stid_old", rows(ANALYSIS / "paired_vs_stid_block_holm.csv")),
+    )
+    for ax, reference, key, source in panels:
+        record = {horizons[r["horizon"]]: r for r in source}
         for i, horizon in enumerate((15, 45, 90, 180)):
             r = record[horizon]
             center, lo, hi = [float(r[col]) for col in ("mean_mae_difference", "ci_low", "ci_high")]
             ax.plot([lo, hi], [i, i], color=COLORS[key], linewidth=2.5)
             ax.plot(center, i, marker="o", color=COLORS[key], markersize=7)
         ax.axvline(0, color="#333333", linestyle="--", linewidth=1)
-        ax.set_title(f"DAGNN-PISTNet-v3 minus {reference}")
+        ax.set_title(f"Ours minus {reference}")
         ax.set_xlabel("Paired MAE difference (positive: reference better)")
         ax.grid(axis="x", alpha=0.2)
     axes[0].set_yticks(range(4), ["15 min", "45 min", "90 min", "180 min"])
@@ -132,6 +143,7 @@ def paired_differences() -> None:
 def calibration() -> None:
     data = rows(STUDY / "summary.csv")
     datasets = ["metr_la", "pems_bay", "pems07", "pems08", "large_st_ca"]
+    labels = {"metr_la": "METR-LA", "pems_bay": "PEMS-BAY", "pems07": "PEMS07", "pems08": "PEMS08", "large_st_ca": "LargeST-CA local"}
     horizons = [5, 15, 30, 60]
     metrics = {"coverage80": 0.8, "coverage95": 0.95}
     fig, axes = plt.subplots(1, 2, figsize=(11.8, 4.5), sharex=True)
@@ -139,11 +151,12 @@ def calibration() -> None:
         for dataset in datasets:
             lookup = {(r["horizon"], r["feature"]): float(r["mean"]) for r in data if r["dataset"] == dataset and r["variant"] == "full" and r["metric"] == metric}
             feature = "speed" if dataset in ("metr_la", "pems_bay") else "flow"
-            ax.plot(horizons, [lookup[(f"{h}min", feature)] for h in horizons], marker="o", label=dataset)
+            ax.plot(horizons, [lookup[(f"{h}min", feature)] for h in horizons], marker="o", label=labels[dataset])
         ax.axhline(nominal, color="#222222", linestyle="--", linewidth=1.1)
         ax.set_title(f"Nominal {int(nominal * 100)}% interval")
         ax.set_xlabel("Forecast horizon (minutes)")
-        ax.set_ylabel("Empirical coverage")
+        ax.set_ylabel("Empirical coverage (zoomed scale)")
+        ax.set_ylim(0.70, 1.00)
         ax.set_xticks(horizons)
         ax.grid(alpha=0.2)
     axes[1].legend(loc="lower left", fontsize=8.5, frameon=False)
@@ -175,13 +188,13 @@ def efficiency() -> None:
     for ax, (field, title, scale, unit) in zip(axes.flat, metrics, strict=True):
         values = [(latency[name] if field == "inference_latency_ms_per_sample_mean" else float(data[name][field])) * scale for name in names]
         ax.bar(range(3), values, color=colors, width=0.65)
-        ax.set_xticks(range(3), ["Ours", "FaST", "STID"])
+        ax.set_xticks(range(3), ["Ours", "FaST", "STID\nBasicTS"])
         ax.set_title(title)
         ax.set_ylabel(unit)
         if field == "inference_latency_ms_per_sample_mean":
             ax.set_yscale("log")
         ax.grid(axis="y", alpha=0.18)
-    fig.suptitle("Official LargeST-CA 2019 resource profile (batch-2 FP16 latency)")
+    fig.suptitle("Previously profiled LargeST-CA 2019 implementations (batch-2 FP16 latency)")
     fig.tight_layout()
     save(fig, "figure6_efficiency")
 
